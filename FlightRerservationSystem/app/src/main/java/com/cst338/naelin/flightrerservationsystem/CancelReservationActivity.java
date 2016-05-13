@@ -21,14 +21,14 @@ import java.util.ArrayList;
 
 public class CancelReservationActivity extends AppCompatActivity
 {
-    private Dialog dialog;
+    protected Dialog dialog;
     private static TextView usernameInput;
     private static TextView passwordInput;
     private RecyclerView reservationsRecyclerView;
     private LinearLayoutManager reservationsLayoutManager;
     private ReservationsAdapter reservationAdapter;
 
-    boolean isSuccessful;
+    private boolean isSuccessful;
 
     // Database
     SQLiteHelper db;

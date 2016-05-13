@@ -1,5 +1,6 @@
 package com.cst338.naelin.flightrerservationsystem;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -7,8 +8,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
+
+import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * Created by naelin on 5/12/16.
@@ -26,6 +33,9 @@ public class CancelReservation
         context = c;
         db = SQLiteHelper.getInstance(context);
 
+        final EditText usernameEditText = (EditText) ((CancelReservationActivity) c).dialog.findViewById(R.id.username_edit_text);
+
+
         new AlertDialog.Builder(context)
                 .setTitle("Confirm Cancellation")
                 .setMessage("Are you sure you want to cancel this reservation?")
@@ -41,6 +51,10 @@ public class CancelReservation
                         reservationToDelete.setReservationNo(reservationNoTextView.getText().toString().substring(18));
                         db.deleteReservation(reservationToDelete);
 
+                        TextView departureTextView = (TextView) view.findViewById(R.id.departure_text_view);
+                        TextView arrivalTextView = (TextView) view.findViewById(R.id.arrival_text_view);
+                        TextView departureTimeTextView = (TextView) view.findViewById(R.id.departure_time_text_view);
+
                         // Update the quantity (put back the no. of tickets available) of the flight to the database
                         // Get flight no. to see which flight to update
                         TextView flightNoTextView = (TextView) view.findViewById(R.id.flight_no_text_view);
@@ -54,6 +68,22 @@ public class CancelReservation
 
                         Toast.makeText(context, "Your reservation has been cancelled!", Toast.LENGTH_SHORT).show();
 
+                        CancellationLog cancellationLog = new CancellationLog();
+                        String timestamp = getTimestamp();
+                        String cancellationLogString = "Transaction type: Cancellation\n" +
+                                                        "Customer's username: " + usernameEditText.getText().toString() + "\n" +
+                                                        flightNoTextView.getText().toString() + "\n" +
+                                                        departureTextView.getText().toString() + ", " + departureTimeTextView.getText().toString() + "\n" +
+                                                        arrivalTextView.getText().toString() + "\n" +
+                                                        noOfTicketsTextView.getText().toString() + "\n" +
+                                                        "Reservation No.: " + reservationToDelete.getReservationNo() + "\n" +
+                                                        "Transaction date: " + timestamp.substring(0, 10) + "\n" +
+                                                        "Transaction time: " + timestamp.substring(12);
+
+
+                        cancellationLog.setCancellationInfo(cancellationLogString);
+
+                        db.addCancellationLog(cancellationLog);
                         context.startActivity(new Intent(context, MenuActivity.class));
 
                     }
@@ -78,4 +108,12 @@ public class CancelReservation
          }
 
 
+    public static String getTimestamp()
+    {
+        Date date = new java.util.Date();
+        System.out.println(new Timestamp(date.getTime()));
+        Timestamp timestamp = new Timestamp(date.getTime());
+
+        return timestamp.toString();
+    }
 }

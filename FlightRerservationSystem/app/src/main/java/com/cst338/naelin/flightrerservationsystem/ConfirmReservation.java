@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class UserLogin {
+public class ConfirmReservation {
 
     // Database
     private static SQLiteHelper db;
@@ -92,7 +92,7 @@ public class UserLogin {
         }
         else
         {
-            Toast.makeText(context, "Success!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show();
             dialog.cancel();
         }
 
@@ -118,7 +118,7 @@ public class UserLogin {
 
         // Set flight information in confirmationDialog
         TextView usernameTextView = (TextView) confirmationDialog.findViewById(R.id.username_text_view);
-        usernameTextView.setText(usernameInput.getText().toString());
+        usernameTextView.setText("Username: " + usernameInput.getText().toString());
 
         TextView flightNoTextView = (TextView) confirmationDialog.findViewById(R.id.flight_no_text_view);
         flightNoTextView.setText(flightNo.getText().toString());
@@ -137,7 +137,7 @@ public class UserLogin {
 
         // Generate Reservation No.
         final TextView reservationNoTextView = (TextView) confirmationDialog.findViewById(R.id.reservation_no_text_view);
-        reservationNoTextView.setText("Reservation No. " + (flightNo.getText().toString() + departure.getText().toString()).hashCode());
+        reservationNoTextView.setText("Reservation No. " + (getTimestamp()).hashCode());
 
 
         final double total = Integer.parseInt(noOfTickets.getText().toString()) * Double.parseDouble(amountOwed.getText().toString().substring(8));
@@ -157,6 +157,7 @@ public class UserLogin {
                 Reservation reservation = new Reservation();
                 reservation.setTransactionType("Reserve Seat");
                 reservation.setUsername(usernameInput.getText().toString());
+
                 reservation.setFlightNo(flightNo.getText().toString().substring(11));
                 reservation.setDeparture(departure.getText().toString().substring(11));
                 reservation.setArrival(arrival.getText().toString().substring(9));
@@ -164,7 +165,7 @@ public class UserLogin {
                 reservation.setNoOfTickets(Integer.parseInt(noOfTickets.getText().toString()));
                 reservation.setReservationNo(reservationNoTextView.getText().toString().substring(16)); // TODO: Where does reservation no. come from?
 
-                Log.d("UserLogin", "confirmFlight->onClick" + reservation.getReservationNo());
+                Log.d("ConfirmReservation", "confirmFlight->onClick" + reservation.getUsername());
                 reservation.setTotal(total);
                 reservation.setTimestamp(getTimestamp());
 

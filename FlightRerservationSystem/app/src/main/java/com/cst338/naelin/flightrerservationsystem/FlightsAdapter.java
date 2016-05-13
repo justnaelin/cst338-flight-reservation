@@ -66,7 +66,7 @@ public class FlightsAdapter extends RecyclerView.Adapter<FlightsAdapter.FlightVi
                 @Override
                 public void onClick(View view)
                 {
-                    UserLogin.promptLogin(view, view.getContext());
+                    ConfirmReservation.promptLogin(view, view.getContext());
                 }
             });
 

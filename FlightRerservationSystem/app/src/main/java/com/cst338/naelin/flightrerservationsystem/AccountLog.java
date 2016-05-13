@@ -56,12 +56,11 @@ public class AccountLog
     }
 
     @Override
-    public String toString() {
-        return "AccountLog{" +
-                "id=" + id +
-                ", transactionType='" + transactionType + '\'' +
-                ", username='" + username + '\'' +
-                ", timestamp='" + timestamp + '\'' +
-                '}';
+    public String toString()
+    {
+        return "Transaction Type: " + transactionType + "\n" +
+                "Username: " + username + "\n" +
+                "Transaction date: " + timestamp.substring(0, 10) + "\n" +
+                "Transaction time: " + timestamp.substring(12) + "\n";
     }
 }

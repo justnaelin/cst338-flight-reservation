@@ -21,7 +21,8 @@ public class SQLiteHelper extends SQLiteOpenHelper
     private static final String TABLE_LOGIN = "login";
     private static final String TABLE_ACCOUNT_LOG = "account_log";
     private static final String TABLE_FLIGHT = "flight";
-    private static final String TABLE_RESERVATION = "reservation";
+    private static final String TABLE_RESERVATION_LOG = "reservation_log";
+    private static final String TABLE_CANCELLATION_LOG = "cancellation_log";
 
     // Column names of login table
     private static final String KEY_ID = "id";
@@ -40,10 +41,13 @@ public class SQLiteHelper extends SQLiteOpenHelper
     private static final String KEY_CAPACITY = "capacity";
     private static final String KEY_PRICE = "price";
 
-    // Column names of reservation table
+    // Column names of reservation log table
     private static final String KEY_NO_TICKETS = "noTickets";
     private static final String KEY_RESERVATION_NO = "reservationNo";
     private static final String KEY_TOTAL = "total";
+
+    // Column names of cancellation log table
+    private static final String KEY_CANCELLATION_INFO = "cancellationInfo";
 
     // Database version
     private static final int DATABASE_VERSION = 1;
@@ -76,7 +80,7 @@ public class SQLiteHelper extends SQLiteOpenHelper
                  KEY_USERNAME + " TEXT, " +
                  KEY_PASSWORD + " TEXT)";
 
-        String CREATE_TRANSACTION_LOG_TABLE = "CREATE TABLE " + TABLE_ACCOUNT_LOG + " ( " +
+        String CREATE_ACCOUNT_LOG_TABLE = "CREATE TABLE " + TABLE_ACCOUNT_LOG + " ( " +
                 KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 KEY_TRANSACTION_TYPE + " TEXT, " +
                 KEY_USERNAME + " TEXT, " +
@@ -91,7 +95,7 @@ public class SQLiteHelper extends SQLiteOpenHelper
                 KEY_CAPACITY + " INTERGER, " +
                 KEY_PRICE + " REAL)";
 
-        String CREATE_RESERVATION_TABLE = "CREATE TABLE " + TABLE_RESERVATION + " ( " +
+        String CREATE_RESERVATION_TABLE = "CREATE TABLE " + TABLE_RESERVATION_LOG + " ( " +
                 KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 KEY_TRANSACTION_TYPE + " TEXT, " +
                 KEY_USERNAME + " TEXT, " +
@@ -104,11 +108,19 @@ public class SQLiteHelper extends SQLiteOpenHelper
                 KEY_TOTAL + " REAL, " +
                 KEY_TIMESTAMP + " TEXT)";
 
+        String CREATE_CANCELLATION_LOG = "CREATE TABLE " + TABLE_CANCELLATION_LOG + " ( " +
+                KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                KEY_CANCELLATION_INFO + " TEXT, " +
+                KEY_TIMESTAMP + " TEXT)";
+
+
+
         // Execute an SQL statement to create the tables
         db.execSQL(CREATE_LOGIN_TABLE);
-        db.execSQL(CREATE_TRANSACTION_LOG_TABLE);
+        db.execSQL(CREATE_ACCOUNT_LOG_TABLE);
         db.execSQL(CREATE_FLIGHT_TABLE);
         db.execSQL(CREATE_RESERVATION_TABLE);
+        db.execSQL(CREATE_CANCELLATION_LOG);
 
     }
 
@@ -118,7 +130,8 @@ public class SQLiteHelper extends SQLiteOpenHelper
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOGIN);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNT_LOG);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_FLIGHT);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESERVATION);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESERVATION_LOG);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CANCELLATION_LOG);
 
         this.onCreate(db);
     }
@@ -242,12 +255,12 @@ public class SQLiteHelper extends SQLiteOpenHelper
         return accountLogs;
     }
 
-    public void addFlight(Flight flight)
+    public boolean addFlight(Flight flight)
     {
         Log.d(TAG, "addFlight() - " + flight.toString());
 
         if(checkExists(flight))
-            return;
+            return false;
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -263,7 +276,7 @@ public class SQLiteHelper extends SQLiteOpenHelper
 
         db.close();
 
-
+        return true;
     }
 
     public boolean checkExists(Flight flight)
@@ -364,7 +377,7 @@ public class SQLiteHelper extends SQLiteOpenHelper
         values.put(KEY_TIMESTAMP, reservation.getTimestamp());
 
 
-        db.insert(TABLE_RESERVATION, null, values);
+        db.insert(TABLE_RESERVATION_LOG, null, values);
 
         db.close();
     }
@@ -373,7 +386,7 @@ public class SQLiteHelper extends SQLiteOpenHelper
     {
         ArrayList<Reservation> reservations = new ArrayList<>();
 
-        String query = "SELECT * FROM " + TABLE_RESERVATION;
+        String query = "SELECT * FROM " + TABLE_RESERVATION_LOG;
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
@@ -412,7 +425,7 @@ public class SQLiteHelper extends SQLiteOpenHelper
     {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        db.delete(TABLE_RESERVATION,
+        db.delete(TABLE_RESERVATION_LOG,
                   KEY_RESERVATION_NO + " = '" +
                   reservation.getReservationNo() + "'",
                   null);
@@ -420,5 +433,50 @@ public class SQLiteHelper extends SQLiteOpenHelper
         db.close();
 
         Log.d(TAG, "deleteReservation() - " + reservation.toString());
+    }
+    
+    public void addCancellationLog(CancellationLog cancellationLog) 
+    {
+        Log.d(TAG, "addCancellationLog() - " + cancellationLog.toString());
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_CANCELLATION_INFO, cancellationLog.getCancellationInfo());
+        values.put(KEY_TIMESTAMP, cancellationLog.getTimestamp());
+
+        db.insert(TABLE_CANCELLATION_LOG, null, values);
+
+        db.close(); 
+    }
+
+    public ArrayList<CancellationLog> getAllCancellationLogs()
+    {
+        ArrayList<CancellationLog> cancellationLogs = new ArrayList<>();
+
+        String query = "SELECT * FROM " + TABLE_CANCELLATION_LOG;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        CancellationLog cancellationLog = null;
+        if(cursor.moveToFirst())
+        {
+            do
+            {
+                cancellationLog = new CancellationLog();
+                cancellationLog.setId(cursor.getInt(0));
+                cancellationLog.setCancellationInfo(cursor.getString(1));
+
+                cancellationLogs.add(cancellationLog);
+
+            } while(cursor.moveToNext());
+        }
+
+        Log.d(TAG, "getAllCancellationLogs() - " + cancellationLogs.toString());
+
+        db.close();
+
+        return cancellationLogs;
     }
 }

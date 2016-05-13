@@ -48,7 +48,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         // Create accounts
         db.addLogin(new Login("A@lice5", "@cSit100"));
         db.addLogin(new Login("$BriAn7", "123aBc##"));
-        db.addLogin(new Login("!chriS12", "CHrIS12!!"));
+        db.addLogin(new Login("!chriS12!", "CHrIS12!!"));
         db.addLogin(new Login("!admiM2", "!admiM2"));
 
         // Add flights

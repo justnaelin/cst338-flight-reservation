@@ -9,4 +9,66 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.cst338.naelin.flightrerservationsystem.ManageSystemActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Manage System"
+        android:id="@+id/manage_system_text_view"
+        android:textSize="20dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Account Logs"
+        android:id="@+id/new_account_logs_text_view"
+        android:layout_below="@+id/manage_system_text_view"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/account_logs_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_below="@+id/new_account_logs_text_view">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reservation Logs"
+        android:id="@+id/reservation_logs_text_view"
+        android:layout_below="@+id/account_logs_recycler_view" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/reservation_logs_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_below="@+id/reservation_logs_text_view">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cancellation_logs_text_view"
+        android:text="Cancellation Logs"
+        android:layout_below="@+id/reservation_logs_recycler_view"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/cancellation_logs_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_below="@+id/cancellation_logs_text_view">
+
+
+    </android.support.v7.widget.RecyclerView>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Flight"
+        android:id="@+id/confirm_button"
+        android:layout_below="@+id/cancellation_logs_recycler_view"/>
+
+
+
 </RelativeLayout>
